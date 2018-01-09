@@ -1,5 +1,7 @@
 package spell;
 
+import java.util.Map;
+
 public class Trie implements ITrie{
 
     @Override
@@ -24,7 +26,7 @@ public class Trie implements ITrie{
      */
     @Override
     public void add(String word) {
-
+        root.add(word.toLowerCase());
     }
 
     /**
@@ -36,7 +38,8 @@ public class Trie implements ITrie{
      */
     @Override
     public INode find(String word) {
-        return null;
+
+        return root.find(word);
     }
 
     /**
@@ -59,6 +62,8 @@ public class Trie implements ITrie{
         return 0;
     }
 
+    private Node root = new Node();
+
     class Node implements INode{
         /**
          * Returns the frequency count for the word represented by the node
@@ -67,7 +72,37 @@ public class Trie implements ITrie{
          */
         @Override
         public int getValue() {
-            return 0;
+            return count;
         }
+
+        void add(String word){
+            if(word.length() == 0){
+                count++;
+            } else {
+                char next = word.charAt(0);
+                word = word.substring(1);
+                int index = charToIndex(next);
+
+                if(children[index] == null){
+                    children[index] = new Node();
+                }
+
+                children[index].add(word);
+            }
+        }
+
+        Node find(String word){
+            return null;
+        }
+
+        int charToIndex(char value){
+            int utf8Val = (int) value;
+            int utf8AVal = (int) 'a';
+            return utf8Val - utf8AVal;
+        }
+
+        private int count = 0;
+
+        private Node[] children = new Node[26];
     }
 }

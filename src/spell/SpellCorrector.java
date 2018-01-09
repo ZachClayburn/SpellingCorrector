@@ -1,6 +1,10 @@
 package spell;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Scanner;
 
 public class SpellCorrector implements ISpellCorrector {
 
@@ -14,7 +18,14 @@ public class SpellCorrector implements ISpellCorrector {
      */
     @Override
     public void useDictionary(String dictionaryFileName) throws IOException {
+        Path dictionaryFilePath = Paths.get(dictionaryFileName);
+        Scanner in = new Scanner(dictionaryFilePath, StandardCharsets.UTF_8.displayName());
 
+        dictionary = new Trie();
+
+        while(in.hasNext()){
+            dictionary.add(in.next());
+        }
     }
 
     /**
@@ -29,5 +40,5 @@ public class SpellCorrector implements ISpellCorrector {
         return null;
     }
 
-    private Trie dictionary = new Trie();
+    private Trie dictionary = null;
 }
