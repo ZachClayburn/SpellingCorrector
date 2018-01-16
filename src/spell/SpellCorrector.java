@@ -140,11 +140,31 @@ public class SpellCorrector implements ISpellCorrector {
 
     private TreeSet<String> getAlterDistance(String word){
         TreeSet<String> options = new TreeSet<>();
+        String letters = "abcdefghijklmnopqrstuvwxyz";
+        for(int i = 0; i < word.length(); i++){
+            String before = (i > 0) ? word.substring(0,i) : "";
+            String after = word.substring(i+1);
+            char replaced = word.charAt(i);
+            for(int j = 0; j < letters.length(); j++){
+                char newChar = letters.charAt(j);
+                if(newChar != replaced){
+                    options.add(before + newChar + after);
+                }
+            }
+        }
         return options;
     }
 
     private TreeSet<String> getInsertDistance(String word){
         TreeSet<String> options = new TreeSet<>();
+        String letters = "abcdefghijklmnopqrstuvwxyz";
+        for(int i = 0; i < word.length()+1; i++){
+            String before = (i > 0) ? word.substring(0,i) : "";
+            String after = word.substring(i);
+            for(int j = 0; j < letters.length(); j++){
+                options.add(before + letters.charAt(j) + after);
+            }
+        }
         return options;
     }
 
