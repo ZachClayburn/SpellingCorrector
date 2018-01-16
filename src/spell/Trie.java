@@ -38,7 +38,6 @@ public class Trie implements ITrie{
      */
     @Override
     public INode find(String word) {
-
         return root.find(word);
     }
 
@@ -49,7 +48,7 @@ public class Trie implements ITrie{
      */
     @Override
     public int getWordCount() {
-        return 0;
+        return root.getWordCount();
     }
 
     /**
@@ -59,7 +58,7 @@ public class Trie implements ITrie{
      */
     @Override
     public int getNodeCount() {
-        return 0;
+        return root.getNodeCount();
     }
 
     private Node root = new Node();
@@ -92,13 +91,39 @@ public class Trie implements ITrie{
         }
 
         Node find(String word){
-            return null;
+            if(word.equals("")){
+                return this;
+            }
+            char next = word.charAt(0);
+            word = word.substring(1);
+
+            if(children[charToIndex(next)] == null) {
+                return null;
+            } else {
+                return children[charToIndex(next)].find(word);
+            }
+        }
+
+        int getNodeCount(){
+            int nodeCount = 1;
+            for (Node node:children) {
+                if(node != null){
+                    nodeCount += node.getNodeCount();
+                }
+            }
+            return nodeCount;
+        }
+
+        int getWordCount(){
+            int wordCount = (count == 0) ? 0 : 1;
+            for(Node node : children){
+                wordCount += node.getWordCount();
+            }
+            return wordCount;
         }
 
         int charToIndex(char value){
-            int utf8Val = (int) value;
-            int utf8AVal = (int) 'a';
-            return utf8Val - utf8AVal;
+            return (int)value - (int)'a';
         }
 
         private int count = 0;

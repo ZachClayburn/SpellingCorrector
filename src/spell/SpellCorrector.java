@@ -37,6 +37,12 @@ public class SpellCorrector implements ISpellCorrector {
      */
     @Override
     public String suggestSimilarWord(String inputWord) {
+
+        ITrie.INode foundWord = dictionary.find(inputWord);
+        if(foundWord != null){
+            return inputWord.toLowerCase();
+        }
+
         return null;
     }
 
