@@ -9,6 +9,21 @@ import java.util.TreeSet;
 
 public class SpellCorrector implements ISpellCorrector {
 
+    public static void main(String[] args) throws IOException{
+        String fileName = args[0];
+        String word = args[1];
+        SpellCorrector spellCorrector = new SpellCorrector();
+        spellCorrector.useDictionary(fileName);
+        TreeSet<String> deleteDistance = spellCorrector.getDeleteDistance(word);
+        System.out.println(deleteDistance);
+        TreeSet<String> transposeDistance = spellCorrector.getTransposeDistance(word);
+        System.out.println(transposeDistance);
+        TreeSet<String> alterDistance = spellCorrector.getAlterDistance(word);
+        System.out.println(alterDistance);
+        TreeSet<String> insertDistance = spellCorrector.getInsertDistance(word);
+        System.out.println(insertDistance);
+    }
+
 
     /**
      * Tells this <code>SpellCorrector</code> to use the given file as its dictionary
@@ -102,14 +117,24 @@ public class SpellCorrector implements ISpellCorrector {
 
     private TreeSet<String> getDeleteDistance(String word){
         TreeSet<String> options = new TreeSet<>();
-        for(int i = 0; i < word.length(); i++){
-            options.add(word.substring(0,i) + word.substring(i + 1));
+        if(word.length() > 1) {
+            for (int i = 0; i < word.length(); i++) {
+                options.add(word.substring(0, i) + word.substring(i + 1));
+            }
         }
         return options;
     }
 
     private TreeSet<String> getTransposeDistance(String word){
         TreeSet<String> options = new TreeSet<>();
+        for (int i = 0; i < word.length()-1; i++){
+            char char1 = word.charAt(i);
+            char char2 = word.charAt(i+1);
+            String before = (i > 0) ? word.substring(0,i) : "";
+            String after = word.substring(i+2);
+
+            options.add(before + char2 + char1 + after);
+        }
         return options;
     }
 
@@ -122,5 +147,5 @@ public class SpellCorrector implements ISpellCorrector {
         TreeSet<String> options = new TreeSet<>();
         return options;
     }
-    
+
 }
