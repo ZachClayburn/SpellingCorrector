@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
+import java.util.TreeSet;
 
 public class SpellCorrector implements ISpellCorrector {
 
@@ -23,11 +24,10 @@ public class SpellCorrector implements ISpellCorrector {
 
         dictionary = new Trie();
 
-        while(in.hasNext()){
+        while (in.hasNext()) {
             dictionary.add(in.next());
         }
 
-        System.out.println(dictionary.toString());
     }
 
     /**
@@ -41,12 +41,86 @@ public class SpellCorrector implements ISpellCorrector {
     public String suggestSimilarWord(String inputWord) {
 
         ITrie.INode foundWord = dictionary.find(inputWord);
-        if(foundWord != null){
+        if (foundWord != null && foundWord.getValue() > 0) {
             return inputWord.toLowerCase();
+        }
+
+        TreeSet<String> oneDistance = getWordsOneDistanceFrom(inputWord.toLowerCase());
+
+        String match = searchForMatch(oneDistance);
+
+        if (match != null) {
+            return match;
+        }
+
+        TreeSet<String> twoDistance = getWordsTwoDistanceFrom(oneDistance);
+
+        match = searchForMatch(twoDistance);
+
+        if (match != null) {
+            return match;
         }
 
         return null;
     }
 
     private Trie dictionary = null;
+
+    private TreeSet<String> getWordsOneDistanceFrom(String word) {
+        TreeSet<String> wordSet = new TreeSet<>();
+
+        wordSet.addAll(getDeleteDistance(word));
+        wordSet.addAll(getTransposeDistance(word));
+        wordSet.addAll(getAlterDistance(word));
+        wordSet.addAll(getInsertDistance(word));
+
+        return wordSet;
+    }
+
+    private TreeSet<String> getWordsTwoDistanceFrom(TreeSet<String> words) {
+        TreeSet<String> wordSet = new TreeSet<>();
+        for(String word : words){
+            wordSet.addAll(getWordsOneDistanceFrom(word));
+        }
+        return wordSet;
+    }
+
+    private String searchForMatch(TreeSet<String> options) {
+        int maxCount = 0;
+        String bestMatch = null;
+
+        for(String word : options){
+            ITrie.INode match = dictionary.find(word);
+            if(match != null && match.getValue() > maxCount){
+                maxCount = match.getValue();
+                bestMatch = word;
+            }
+        }
+
+        return bestMatch;
+    }
+
+    private TreeSet<String> getDeleteDistance(String word){
+        TreeSet<String> options = new TreeSet<>();
+        for(int i = 0; i < word.length(); i++){
+            options.add(word.substring(0,i) + word.substring(i + 1));
+        }
+        return options;
+    }
+
+    private TreeSet<String> getTransposeDistance(String word){
+        TreeSet<String> options = new TreeSet<>();
+        return options;
+    }
+
+    private TreeSet<String> getAlterDistance(String word){
+        TreeSet<String> options = new TreeSet<>();
+        return options;
+    }
+
+    private TreeSet<String> getInsertDistance(String word){
+        TreeSet<String> options = new TreeSet<>();
+        return options;
+    }
+    
 }
