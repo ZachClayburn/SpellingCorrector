@@ -26,6 +26,8 @@ public class SpellCorrector implements ISpellCorrector {
         while(in.hasNext()){
             dictionary.add(in.next());
         }
+
+        System.out.println(dictionary.toString());
     }
 
     /**

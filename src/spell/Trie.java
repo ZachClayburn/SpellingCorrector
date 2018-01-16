@@ -16,7 +16,7 @@ public class Trie implements ITrie{
 
     @Override
     public String toString() {
-        return super.toString();
+        return root.getString("");
     }
 
     /**
@@ -117,13 +117,34 @@ public class Trie implements ITrie{
         int getWordCount(){
             int wordCount = (count == 0) ? 0 : 1;
             for(Node node : children){
-                wordCount += node.getWordCount();
+                if(node != null) {
+                    wordCount += node.getWordCount();
+                }
             }
             return wordCount;
         }
 
+
+        String getString(String parentString){
+            StringBuilder resultString = new StringBuilder();
+            if(count != 0){
+                resultString.append(parentString);
+                resultString.append('\n');
+            }
+            for(int i = 0; i < 26; i++){
+                if(children[i] != null){
+                    resultString.append(children[i].getString(parentString + indexToChar(i)));
+                }
+            }
+            return resultString.toString();
+        }
+
         int charToIndex(char value){
             return (int)value - (int)'a';
+        }
+
+        char indexToChar(int index){
+            return (char) (index + (int)'a');
         }
 
         private int count = 0;
