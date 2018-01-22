@@ -66,7 +66,7 @@ public class Trie implements ITrie{
      */
     @Override
     public INode find(String word) {
-        return root.find(word);
+        return root.find(word.toLowerCase());
     }
 
     /**
