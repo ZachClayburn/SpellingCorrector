@@ -129,17 +129,13 @@ public class Trie implements ITrie{
 
         Node find(String word){
             if(word.equals("")){
-                return this;
+                return (count > 0) ? this : null;
             }
             char next = word.charAt(0);
             word = word.substring(1);
 
-            if(children[charToIndex(next)] == null) {
-                return null;
-            } else {
-                return children[charToIndex(next)].find(word);
+            return (children[charToIndex(next)] == null) ? null : children[charToIndex(next)].find(word);
             }
-        }
 
         String getString(String parentString){
             StringBuilder resultString = new StringBuilder();
