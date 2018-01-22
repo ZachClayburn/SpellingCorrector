@@ -1,17 +1,45 @@
 package spell;
 
-import java.util.Map;
 
 public class Trie implements ITrie{
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return (nodeCount * 7) + (wordCount * 3);
     }
 
     @Override
     public boolean equals(Object o) {
-        return super.equals(o);
+        if(o == null){
+            return false;
+        }
+        if(o.getClass() != this.getClass()){
+            return false;
+        }
+        Trie trie = (Trie) o;
+        if(wordCount != trie.wordCount || nodeCount != trie.nodeCount){
+            return false;
+        }
+
+        return equalsHelper(root, trie.root);
+    }
+
+    private boolean equalsHelper(Node mine, Node theirs){
+        if(mine.count != theirs.count){
+            return false;
+        }
+        for(int i = 0; i < 26; i++){
+            if(mine.children[i] == null){
+                if (theirs.children[i] != null){
+                    return false;
+                }
+            }else if(theirs.children[i] == null){
+                return false;
+            }else if(!equalsHelper(mine.children[i],theirs.children[i])){
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -48,7 +76,7 @@ public class Trie implements ITrie{
      */
     @Override
     public int getWordCount() {
-        return root.getWordCount();
+        return wordCount;
     }
 
     /**
@@ -58,10 +86,15 @@ public class Trie implements ITrie{
      */
     @Override
     public int getNodeCount() {
-        return root.getNodeCount();
+        return nodeCount;
     }
 
     private Node root = new Node();
+
+    private int nodeCount = 1;
+
+    private int wordCount = 0;
+
 
     class Node implements INode{
         /**
@@ -76,6 +109,9 @@ public class Trie implements ITrie{
 
         void add(String word){
             if(word.length() == 0){
+                if(this.count == 0) {
+                    Trie.this.wordCount++;
+                }
                 count++;
             } else {
                 char next = word.charAt(0);
@@ -84,6 +120,7 @@ public class Trie implements ITrie{
 
                 if(children[index] == null){
                     children[index] = new Node();
+                    Trie.this.nodeCount++;
                 }
 
                 children[index].add(word);
@@ -103,27 +140,6 @@ public class Trie implements ITrie{
                 return children[charToIndex(next)].find(word);
             }
         }
-
-        int getNodeCount(){
-            int nodeCount = 1;
-            for (Node node:children) {
-                if(node != null){
-                    nodeCount += node.getNodeCount();
-                }
-            }
-            return nodeCount;
-        }
-
-        int getWordCount(){
-            int wordCount = (count == 0) ? 0 : 1;
-            for(Node node : children){
-                if(node != null) {
-                    wordCount += node.getWordCount();
-                }
-            }
-            return wordCount;
-        }
-
 
         String getString(String parentString){
             StringBuilder resultString = new StringBuilder();
